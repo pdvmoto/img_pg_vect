@@ -1,0 +1,28 @@
+
+aim: 
+0. store images (or path to images, or just filenames..)
+1. convert pictures to vectors, get searchable vector data per img
+2. find related images by vector-search
+
+pip install PIL
+pip install sentence_transformers 
+
+pip install clip-server
+pip install clip-client
+
+may need also adjust path.. 
+  WARNING: The script transformers-cli is installed in '/Users/pdvbv/Library/Python/3.9/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+
+all sort of problems due to numPy v2, and modules encoded with V1..
+
+
+blog inspirations... : 
+https://huggingface.co/sentence-transformers/clip-ViT-L-14
+
+https://medium.com/@tenyks_blogger/how-to-build-an-image-to-image-search-tool-using-clip-pinecone-b7b70c44faac
+
+
+looked promising:
+https://cloudinary.com/guides/image-effects/building-a-python-image-recognition-system
+

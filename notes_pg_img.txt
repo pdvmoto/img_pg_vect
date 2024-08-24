@@ -1,0 +1,77 @@
+# this is result from chatgpt.. "how to store vectors in datbase"
+
+#  set up databvase...
+CREATE TABLE image_features (
+    id SERIAL PRIMARY KEY,
+    image_name TEXT NOT NULL,
+    feature_vector FLOAT8[]  -- Array of floats to store the feature vector
+);
+
+-- needs 
+\! pip install psycopg2
+
+
+# the python code...
+
+import tensorflow as tf
+from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.preprocessing import image
+import numpy as np
+import psycopg2
+
+# Load the pre-trained ResNet50 model without the final classification layer (include_top=False)
+model = ResNet50(weights='imagenet', include_top=False, pooling='avg')
+
+def extract_vector(img_path):
+    """
+    Extract feature vector from an image using ResNet50.
+    
+    :param img_path: Path to the image file.
+    :return: Feature vector as a numpy array.
+    """
+    img = image.load_img(img_path, target_size=(224, 224))
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
+    img_array = preprocess_input(img_array)
+    features = model.predict(img_array)
+    vector = features.flatten()
+    return vector
+
+def store_vector_in_db(image_name, vector, conn):
+    """
+    Store feature vector in PostgreSQL database.
+    
+    :param image_name: Name of the image file.
+    :param vector: Feature vector as a numpy array.
+    :param conn: Connection object to the PostgreSQL database.
+    """
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            INSERT INTO image_features (image_name, feature_vector)
+            VALUES (%s, %s)
+            """,
+            (image_name, vector.tolist())  # Convert numpy array to list for insertion
+        )
+        conn.commit()
+
+# Connect to the PostgreSQL database
+conn = psycopg2.connect(
+    dbname='yugabyte',
+    user='yugabyte',
+    password='yugabyte',
+    host='localhost',
+    port='5432'
+)
+
+# Example usage
+img_path = 'img1.jpg'
+image_name = 'first image img1'
+vector = extract_vector(img_path)
+store_vector_in_db(image_name, vector, conn)
+
+# Close the connection
+conn.close()
+
+
