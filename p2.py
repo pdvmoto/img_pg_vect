@@ -59,9 +59,10 @@ def store_vector_in_db(image_name, vector, conn):
     with conn.cursor() as cursor:
         cursor.execute(
             """
-            INSERT INTO image_features (image_name, feature_vector)
-            VALUES (%s, %s)
+            INSERT INTO img (filename, img_vct)
+            VALUES (%s, %s::vector)
             """,
+            # (image_name, vector.tolist())  # Convert numpy array to list for insertion
             (image_name, vector.tolist())  # Convert numpy array to list for insertion
         )
         conn.commit()
