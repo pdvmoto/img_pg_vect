@@ -17,6 +17,7 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 import psycopg2
 
+
 pyfile = os.path.basename(__file__)
 
 # ------------------------------------------------
@@ -67,14 +68,18 @@ def store_vector_in_db(image_name, vector, conn):
         )
         conn.commit()
 
+print ( f_prfx(), '---- functions defined ---- ' )
+
 # Connect to the PostgreSQL database
 conn = psycopg2.connect(
-    dbname='yugabyte',
-    user='yugabyte',
-    password='yugabyte',
-    host='localhost',
-    port='5432'
+    dbname   ='postgres',
+    user     ='postgres',
+    password ='postgres',
+    host     ='localhost',
+    port     ='5432'
 )
+
+print ( f_prfx(), '---- db connetion made ---- ' )
 
 # Example usage
 img_path = 'img1.jpg'
@@ -84,9 +89,10 @@ store_vector_in_db(image_name, vector, conn)
 
 # now loop over a directory
 image_directory = '/Users/pdvbv/zz_imgs/'
+# image_directory = '/Users/pdvbv/fotos/camera/2024_04_16/'
 
 print ( f_prfx() ) 
-print ( f_prfx(), " --- looping over jpg files ---- " ) 
+print ( f_prfx(), " ---- looping over jpg files ---- " ) 
 
 # Loop over all .jpg files in the directory
 for filename in os.listdir(image_directory):
@@ -99,6 +105,8 @@ for filename in os.listdir(image_directory):
     print(f"Processed and stored vector for: {filename}")
   # end if jpg
 # end for loop
+
+# show last image ?
 
 # Close the connection
 conn.close()

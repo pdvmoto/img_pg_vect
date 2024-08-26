@@ -11,5 +11,5 @@ create table image_features (
 create table img (
  id       serial primary key
 , filename  text  
-, img_vct   vector(2048)
+, img_vct   VECTOR(2048)
 ) ; 

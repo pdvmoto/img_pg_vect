@@ -29,17 +29,19 @@ SELECT id,
 FROM vector_data;
 
 SELECT id, 
-       1 - (vector1 <=> vector2) AS cosine_similarity, -- cosine similarity
-       vector1 <=> vector2 AS cosine_distance -- cosine distance
+       1 - (vct1 <=> vct2) AS cosine_similarity, -- cosine similarity
+       vct1 <=> vct2 AS cosine_distance -- cosine distance
 FROM vd2;
 
 insert into vd2 ( fn1, fn2         , vct1     , vct2 ) 
 select img1.filename, img2.filename, img1.img_vct, img2.img_vct 
-from img img1, img img2 ;
+from img img1, img img2 
+where img1.id > img2.id;
 
 SELECT id, fn1, fn2,
        1 - (vct1 <=> vct2) AS cosine_similarity, -- cosine similarity
        vct1 <=> vct2 AS cosine_distance -- cosine distance
 FROM vd2
+where id < 500 
 order by 4 ;
 
