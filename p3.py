@@ -18,6 +18,7 @@ from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.preprocessing import image
 
+import array
 import numpy as np
 
 # import psycopg2
@@ -64,11 +65,11 @@ def store_image_ora ( img_path , ora_conn ):
   # variable to catch out
   img_id = img_cur.var(int)
 
-  # do the insert, input-var => bind-var
+  # do the insert, input-bind-var => local_var
   img_cur.execute ( sql, fname=img_path, binary_image=binary_image, img_id=img_id ) 
 
   # catch out-var
-  retval =img_id.getvalue() 
+  retval = img_id.getvalue()[0]
 
   print ( f_prfx(), ' ---- stored, reval was: ', retval, ' ---- ' ) 
 
@@ -89,7 +90,11 @@ def extract_vector(img_path):
     img_array = np.expand_dims(img_array, axis=0)
     img_array = preprocess_input(img_array)
     features = model.predict(img_array)
-    vector = features.flatten()
+    # vector = features.flatten()
+
+    # make sure we have an arry of floats, ready to insert
+    vector = array.array( 'f', features.flatten() )
+
     return vector
 
 def store_vector_in_db(image_name, vector, conn):
@@ -111,6 +116,36 @@ def store_vector_in_db(image_name, vector, conn):
         )
         conn.commit()
 
+  # ---- end of store_vector_in_db postgres ------- 
+ 
+def store_vector_in_ora(filename, img_id, img_vector, conn):
+
+  sql =  """
+  insert into vec_img_vect ( img_id,      img_vector,  gen_by  )
+                    values ( :stored_id,  :vector,     'by p3' )
+  returning id into :vect_id
+  """
+
+  # cursor
+  vec_cur = ora_conn.cursor()
+
+  # variable to catch out
+  vect_id = vec_cur.var(int)
+
+  # do the insert, input-var => bind-var
+  vec_cur.execute ( sql, stored_id=img_id, vector=img_vector, vect_id=vect_id ) 
+
+  # catch out-var
+  retval = vect_id.getvalue()[0]
+
+  print ( f_prfx(), ' ---- stored, vect_id was: ', retval, ' ---- ' ) 
+
+  # return
+  return retval
+
+  # ---- end of store_vector_in_db postgres ------- 
+
+
 print ( f_prfx(), '---- functions defined ---- ' )
 
 # Connect to the oracle database, and print version
@@ -127,7 +162,9 @@ print ( f_prfx(), '---- db connetion made ---- ' )
 # Example usage
 img_path = 'img1.jpg'
 image_name = 'first image img1'
-store_image_ora ( img_path , ora_conn ) 
+stored_id = store_image_ora ( img_path , ora_conn ) 
+
+print ( f_prfx(), ' ---- img stored, id ', stored_id, ' ---- ' ) 
 
 ora_conn.commit () 
 
@@ -137,8 +174,9 @@ vector = extract_vector(img_path)
 # store_vector_in_db(image_name, vector, ora_conn)
 
 # now loop over a directory
-image_directory = '/Users/pdvbv/zz_imgs/'
+# image_directory = '/Users/pdvbv/zz_imgs/'
 # image_directory = '/Users/pdvbv/fotos/camera/2024_04_16/'
+image_directory = '/Users/pdvbv/Fotos/camera/2023_10_10'
 
 print ( f_prfx() ) 
 print ( f_prfx(), " ---- looping over jpg files ---- " ) 
@@ -146,15 +184,20 @@ print ( f_prfx(), " ---- looping over jpg files ---- " )
 # Loop over all .jpg files in the directory
 for filename in os.listdir(image_directory):
   if filename.endswith('.jpg'):
+
     img_path = os.path.join(image_directory, filename)
     print ( f_prfx(), "file : ", filename )
 
-    store_image_ora ( img_path , ora_conn ) 
+    stored_id = store_image_ora ( img_path , ora_conn ) 
+    print ( f_prfx(), ' ---- loops-file stored, id ', stored_id, ' ---- ' ) 
 
     vector = extract_vector(img_path)
     print ( f_prfx(), "file : ", filename, " extracted..."  )
-    # store_vector_in_db(filename, vector, conn)
-    print(f"Processed and stored vector for: {filename}")
+
+    store_vector_in_ora(filename, stored_id, vector, ora_conn)
+    print(f_prfx(), f"Processed and stored vector for: {filename}", ", id= ", stored_id )
+
+    ora_conn.commit()
 
   # end if jpg
 # end for loop
