@@ -26,3 +26,8 @@ https://medium.com/@tenyks_blogger/how-to-build-an-image-to-image-search-tool-us
 looked promising:
 https://cloudinary.com/guides/image-effects/building-a-python-image-recognition-system
 
+
+
+notes on ora vs pg:
+ - demo1_* scripts use to compare the two.
+ - next find out what insert is needed for oracle + python?

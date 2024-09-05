@@ -90,12 +90,29 @@ def extract_vector(img_path):
     img_array = np.expand_dims(img_array, axis=0)
     img_array = preprocess_input(img_array)
     features = model.predict(img_array)
-    # vector = features.flatten()
 
-    # make sure we have an arry of floats, ready to insert
-    vector = array.array( 'f', features.flatten() )
+    # future: use input-handler, but for the moment, explict convert.
 
-    return vector
+    np_arr = features.flatten()
+
+    # convert to array of correct type..
+    if np_arr.dtype == np.float64:
+      dtype = "d"
+    elif np_arr.dtype == np.float32:
+      dtype = "f"
+    elif np_arr.dtype == np.uint8:
+      dtype = "B"
+    else:
+      dtype = "b"
+
+    print ( f_prfx(), "np_arr: ", np_arr )
+
+    vect =  array.array(dtype, np_arr)
+
+    print ( f_prfx(), "vect: ", vect )
+
+    return vect
+
 
 def store_vector_in_db(image_name, vector, conn):
     """
@@ -174,9 +191,9 @@ vector = extract_vector(img_path)
 # store_vector_in_db(image_name, vector, ora_conn)
 
 # now loop over a directory
-# image_directory = '/Users/pdvbv/zz_imgs/'
+image_directory = '/Users/pdvbv/zz_imgs/'
 # image_directory = '/Users/pdvbv/fotos/camera/2024_04_16/'
-image_directory = '/Users/pdvbv/Fotos/camera/2023_10_10'
+# image_directory = '/Users/pdvbv/Fotos/camera/2023_10_10'
 
 print ( f_prfx() ) 
 print ( f_prfx(), " ---- looping over jpg files ---- " ) 

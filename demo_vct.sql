@@ -33,6 +33,11 @@ SELECT id,
        vct1 <=> vct2 AS cosine_distance -- cosine distance
 FROM vd2;
 
+\echo now refresh the img data.
+\echo .
+
+delete from vd2 ; 
+
 insert into vd2 ( fn1, fn2         , vct1     , vct2 ) 
 select img1.filename, img2.filename, img1.img_vct, img2.img_vct 
 from img img1, img img2 

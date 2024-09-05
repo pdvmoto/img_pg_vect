@@ -89,7 +89,7 @@ store_vector_in_db(image_name, vector, conn)
 
 # now loop over a directory
 image_directory = '/Users/pdvbv/zz_imgs/'
-# image_directory = '/Users/pdvbv/fotos/camera/2024_04_16/'
+# image_directory = '/Users/pdvbv/fotos/camera/2023_10_10/'
 
 print ( f_prfx() ) 
 print ( f_prfx(), " ---- looping over jpg files ---- " ) 
