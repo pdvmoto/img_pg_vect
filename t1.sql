@@ -24,24 +24,25 @@ where t1.id < t2.id
 order by t1.id, t2.id; 
 
 
--- view to obtain varchar
+! read -p "check the various distances ... " abc
+
+-- view to obtain varchar 
 create or replace view v1      as ( select id, ( from_vector ( v ))  as v_ser from t1    ); 
 
-create or replace view v_split as ( 
+-- view to remove brackets and get true csv list
+create or replace view v_csv as ( 
 select id
-, replace ( replace ( from_vector ( v ), '[', '' ), ']', '' )  as v_ser 
+, replace ( replace ( from_vector ( v ), '[', '' ), ']', '' )  as v_csvlist
 from t1    
 );
-
--- view to obtain splittable vc, and split..
 
 
 -- demo to split..
 with rws as (
-     select ',leading,commas,and,trailing,' str from dual
+     select rownum as rec_nr, ',leading,commas,and,trailing,' str from dual
   -- select from_vector ( v )  from t1 
 )
-  select regexp_substr (
+  select rec_nr, level as lvl, regexp_substr (
            str,
            '[^,]+',
            1,
@@ -50,26 +51,30 @@ with rws as (
   from   rws
   connect by level <= 
     length ( trim ( both ',' from str ) ) - 
-    length ( replace ( str, ',' ) ) + 1;
+    length ( replace ( str, ',' ) ) + 1
+  order by 1, 2 ;
+
+! read -p "above is the demo of listing elements as rows..." abc
+
 
 -- hand the string, with just the CSV-values, to the splitter
 with rws as (
-  -- select ',leading,commas,and,trailing,' str from dual
-   select id, v_ser from v_split 
+  -- select rownum as id, ',leading,commas,and,trailing,' str from dual
+  select id, v_csvlist from v_csv 
 )
-  select distinct /* i know, i know, distinct */
+  select distinct /* i know, i know, distinct ?? */
          id
        , level as elem_nr
        , regexp_substr (
-           v_ser,
+           v_csvlist,
            '[^,]+',
            1,
            level
-         ) vct_item_value
+         ) as vct_item_value
   from   rws
   connect by level <= 
-    length ( trim ( both ',' from v_ser ) ) - 
-    length ( replace ( v_ser, ',' ) ) + 1
+    length ( trim ( both ',' from v_csvlist ) ) - 
+    length ( replace ( v_csvlist, ',' ) ) + 1   
   order by id, level ;
 
 select * from v_split ;

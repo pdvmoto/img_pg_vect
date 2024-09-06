@@ -1,11 +1,7 @@
-# Testing oracle pythong . "how to store images and vectors in database"
+# Testing oracle pythong . insert known vectors to verify cos-dist .
 #
-# note: refer to create-tables and query-files.. ct_vecimg.sql
+# note: refer to create-tables and query-files.. dem03_ora.sql
 #
-
-
-# pip install psycopg2
-
 
 # the python code...
 
@@ -21,9 +17,7 @@ from tensorflow.keras.preprocessing import image
 import array
 import numpy 
 
-# import psycopg2
 import oracledb
-
 
 pyfile = os.path.basename(__file__)
 
@@ -39,9 +33,9 @@ def f_prfx():
 print ( f_prfx(), '---- starting ---- ' )
 
 # Load the pre-trained ResNet50 model without the final classification layer (include_top=False)
-model = ResNet50(weights='imagenet', include_top=False, pooling='avg')
+# model = ResNet50(weights='imagenet', include_top=False, pooling='avg')
 
-print ( f_prfx(), '---- model loaded ---- ' )
+# print ( f_prfx(), '---- model loaded ---- ' )
 
 def store_image_ora ( img_path , ora_conn ):
   """
@@ -129,28 +123,6 @@ def extract_vector(img_path):
 
     return np_arr
 
-
-def store_vector_in_db(image_name, vector, conn):
-    """
-    Store feature vector in PostgreSQL database.
-    
-    :param image_name: Name of the image file.
-    :param vector: Feature vector as a numpy array.
-    :param conn: Connection object to the PostgreSQL database.
-    """
-    with conn.cursor() as cursor:
-        cursor.execute(
-            """
-            INSERT INTO img (filename, img_vct)
-            VALUES (%s, %s::vector)
-            """,
-            # (image_name, vector.tolist())  # Convert numpy array to list for insertion
-            (image_name, vector.tolist())  # Convert numpy array to list for insertion
-        )
-        conn.commit()
-
-  # ---- end of store_vector_in_db postgres ------- 
- 
 def store_vector_in_ora(filename, img_id, img_vector, conn):
 
   sql =  """
@@ -175,7 +147,31 @@ def store_vector_in_ora(filename, img_id, img_vector, conn):
 
   return retval
 
-  # ---- end of store_vector_in_db postgres ------- 
+  # ---- end of store_vector_in_db oracle  ------- 
+
+def store_vector_in_tv(filename, img_vector, conn):
+
+  sql =  """
+  insert into tv (  img_vector,  fname  )
+          values (  :vector,     :fname )
+  returning id into :vect_id
+  """
+
+  # cursor
+  vec_cur = ora_conn.cursor()
+
+  # variable to catch out
+  vect_id = vec_cur.var(int)
+
+  # do the insert, input-var => bind-var
+  vec_cur.execute ( sql, vector=img_vector, fname=filename, vect_id=vect_id ) 
+
+  # catch the out-var and return it, in case we need it later
+  retval = vect_id.getvalue()[0]
+
+  print ( f_prfx(), ' ---- stored, vect_id was: ', retval, ' ---- ' ) 
+
+  return retval
 
 
 print ( f_prfx(), '---- functions defined ---- ' )
@@ -192,7 +188,7 @@ for row in cursor.execute("select * from v$version"):
 # define the input type handler, this will convert numpy arrays to vectors ?
 ora_conn.inputtypehandler = input_type_handler
 
-print ( f_prfx(), '---- db connetion made ---- ' )
+print ( f_prfx(), '---- db connetion made, handler defined ---- ' )
 
 # -- Example usage
 # img_path = 'img1.jpg'
@@ -204,10 +200,25 @@ print ( f_prfx(), '---- db connetion made ---- ' )
 # vector = extract_vector(img_path)
 # store_vector_in_db(image_name, vector, ora_conn)
 
+# generate arrays with all zeros and all 1s
+
+nparr_0s = numpy.zeros ( 2048, float )
+nparr_1s = numpy.ones  ( 2048, float )
+nparr_2s = numpy.full  ( 2048, 2.0, float )
+
+# stored_id = store_vector_in_tv("zeros", nparr_0s, ora_conn)
+stored_id = store_vector_in_tv("ones" , nparr_1s, ora_conn)
+# stored_id = store_vector_in_tv("twos" , nparr_2s, ora_conn)
+
+# now set 1 value and add..
+nparr_1s[0] = 2.0
+stored_id = store_vector_in_tv("one2" , nparr_1s, ora_conn)
+
 ora_conn.commit () 
 
 # -- now loop over a directory
-image_directory = '/Users/pdvbv/zz_imgs/'
+image_directory = '/Users/pdvbv/tmp/'
+# image_directory = '/Users/pdvbv/zz_imgs/'
 # image_directory = '/Users/pdvbv/fotos/camera/2024_04_16/'
 # image_directory = '/Users/pdvbv/Fotos/camera/2023_10_10'
 

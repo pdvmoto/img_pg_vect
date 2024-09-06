@@ -60,7 +60,7 @@ def store_vector_in_db(image_name, vector, conn):
     with conn.cursor() as cursor:
         cursor.execute(
             """
-            INSERT INTO img (filename, img_vct)
+            INSERT INTO img (fname, img_vector)
             VALUES (%s, %s::vector)
             """,
             # (image_name, vector.tolist())  # Convert numpy array to list for insertion
@@ -82,10 +82,10 @@ conn = psycopg2.connect(
 print ( f_prfx(), '---- db connetion made ---- ' )
 
 # Example usage
-img_path = 'img1.jpg'
-image_name = 'first image img1'
-vector = extract_vector(img_path)
-store_vector_in_db(image_name, vector, conn)
+# img_path = 'img1.jpg'
+# image_name = 'first image img1'
+# vector = extract_vector(img_path)
+# store_vector_in_db(image_name, vector, conn)
 
 # now loop over a directory
 image_directory = '/Users/pdvbv/zz_imgs/'

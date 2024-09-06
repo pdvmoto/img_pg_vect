@@ -1,5 +1,7 @@
 
--- demonstrate vector with few elements, store and calculate distances.
+-- pg: demonstrate vector with few elements, store and calculate distances.
+
+drop table dv1 ; 
 
 create table dv1 (
   id serial primary key
@@ -15,7 +17,5 @@ SELECT id
 , vct <=> '[2,3,4]'  as cos_dist
 FROM dv1 
 ORDER BY id ;
-
-
 
 
