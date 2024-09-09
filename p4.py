@@ -190,7 +190,7 @@ ora_conn.inputtypehandler = input_type_handler
 
 print ( f_prfx(), '---- db connetion made, handler defined ---- ' )
 
-# -- Example usage
+# -- Example usage, reading 1 img file
 # img_path = 'img1.jpg'
 # image_name = 'first image img1'
 # stored_id = store_image_ora ( img_path , ora_conn ) 
@@ -211,10 +211,20 @@ stored_id = store_vector_in_tv("ones" , nparr_1s, ora_conn)
 # stored_id = store_vector_in_tv("twos" , nparr_2s, ora_conn)
 
 # now set 1 value and add..
-nparr_1s[0] = 2.0
-stored_id = store_vector_in_tv("one2" , nparr_1s, ora_conn)
+nparr_12 = nparr_1s
+nparr_12[0] = 2.0
+stored_id = store_vector_in_tv("one2" , nparr_12, ora_conn)
 
 ora_conn.commit () 
+
+# now try cos-dist to verify algorithm
+cos_dist =  numpy.dot(nparr_1s, nparr_12) / (numpy.linalg.norm(nparr_1s) * numpy.linalg.norm(nparr_12))
+print ( f_prfx(), '---- cos dist betw 1s and 12 : ', cos_dist, ' ---- ' )
+
+
+cos_dist =  numpy.dot(nparr_1s, nparr_2s) / (numpy.linalg.norm(nparr_1s) * numpy.linalg.norm(nparr_2s))
+print ( f_prfx(), '---- cos dist betw 1s and 2s : ', cos_dist, ' ---- ' )
+
 
 # -- now loop over a directory
 image_directory = '/Users/pdvbv/tmp/'

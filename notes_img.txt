@@ -31,3 +31,21 @@ https://cloudinary.com/guides/image-effects/building-a-python-image-recognition-
 notes on ora vs pg:
  - demo1_* scripts use to compare the two.
  - next find out what insert is needed for oracle + python?
+
+notes on numpy:
+ - cast to array.array ( "d", numpy.arr ) seemed to fix it.. grrr...
+
+run first demo, pg:
+ - re-create table : ct_img.sql
+ - check contents of img-path, and load image (start with 2 similar and 1 diff)
+ - python3 p2.py: load images.
+ - \i demo2_pg.sql   : to see the similarities and differences.
+
+
+run first demo oracle, same files as pg.
+ - create tables: ct_vecimg.sql
+ - python3 p3.py 
+ - SQL> @demo2_ora.sql   : to see similarites + diff..
+ - DEBUG... bcse outcomes are diff?
+
+
