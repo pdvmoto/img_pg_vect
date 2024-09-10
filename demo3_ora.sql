@@ -15,9 +15,8 @@ create table tv (
   img_vector    VECTOR (2048, FLOAT32 ) 
 );
 
-
 -- copy some existing vectors
-insert into tv ( fname, img_vector ) select id, img_vector from vec_img_vect ;
+-- insert into tv ( fname, img_vector ) select id, img_vector from vec_img_vect ;
 
 ! echo .
 ! echo " Now insert some simple arrays via python to verify calculations "
@@ -33,5 +32,4 @@ from tv v1, tv v2
 where 1=1
   and v1.id < v2.id
 order by v1.id ; 
-
 

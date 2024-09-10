@@ -14,8 +14,8 @@ from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.preprocessing import image
 
-import array
 import numpy 
+import array
 
 # import psycopg2
 import oracledb
@@ -113,11 +113,11 @@ def extract_vector(img_path):
 
     print ( f_prfx(), " -- np_arr: ", np_arr )
 
-    print ( f_prfx(), " -- np_arr.ndim  "   , np_arr.ndim ) 
-    print ( f_prfx(), " -- np_arr.shape "   , np_arr.shape ) 
-    print ( f_prfx(), " -- np_arr.size "    , np_arr.size ) 
+    # print ( f_prfx(), " -- np_arr.ndim  "   , np_arr.ndim ) 
+    # print ( f_prfx(), " -- np_arr.shape "   , np_arr.shape ) 
+    # print ( f_prfx(), " -- np_arr.size "    , np_arr.size ) 
     print ( f_prfx(), " -- np_arr.dtype "   , np_arr.dtype ) 
-    print ( f_prfx(), " -- np_arr.itemsize ", np_arr.itemsize ) 
+    # print ( f_prfx(), " -- np_arr.itemsize ", np_arr.itemsize ) 
 
     return np_arr  
     # -------------- end: extract_vector ------ 
@@ -131,6 +131,12 @@ def store_vector_in_ora(img_id, img_vector, conn):
   returning id into :vect_id
   """
 
+  sql =  """
+  insert into vec_img_vect ( img_id,        gen_by  )
+                    values ( :stored_id,    'stored by p3.py' )
+  returning id into :vect_id
+  """
+
   # cursor
   vec_cur = ora_conn.cursor()
 
@@ -139,7 +145,8 @@ def store_vector_in_ora(img_id, img_vector, conn):
   
   # using array, and remove need for iput handler?
   # note: hardcoded type d is a float-64, but column is f=float32 ? 
-  new_arr = array.array ( "d", img_vector ) 
+  new_arr = array.array ( "d", img_vector )   # but vector is numpy-array float32 ??
+  # new_arr =  img_vector.tolist()  # try with list
   # new_arr = img_vector 
 
   # print ( f_prfx(), " -- new_arr: ", new_arr )
@@ -152,16 +159,24 @@ def store_vector_in_ora(img_id, img_vector, conn):
 
   # do the insert, :bind_var => local-var 
   # vec_cur.execute ( sql, stored_id=img_id, bind_vect=img_vector, vect_id=vect_id ) 
-  vec_cur.execute ( sql, stored_id=img_id, bind_vect=new_arr, vect_id=vect_id ) 
+  # vec_cur.execute ( sql, stored_id=img_id, bind_vect=new_arr, vect_id=vect_id ) 
+
+  # try creating + update
+  vec_cur.execute ( sql, stored_id=img_id, vect_id=vect_id ) 
 
   # catch the out-var and return it, in case we need it later
   retval = vect_id.getvalue()[0]
 
-  print ( f_prfx(), ' -- stored, vect_id was: ', retval, ' ---- ' ) 
+  print ( f_prfx(), ' -- created vect_id: ', retval, ' ---- ' ) 
  
+  # now fresh cursor to update
+  cur2 = ora_conn.cursor()
+  # cur2.execute ( "update vec_img_vect set img_vector = :1 where img_id = :2 " , [ new_arr, img_id ]  )
+  cur2.execute ( "update vec_img_vect set img_vector = :1 where id = :2 " , [ new_arr, retval ]  )
+
   # put vectordata in file again..
-  dbgdata = 'stored_' + str(img_id) + '.out'
-  n_elem = vector_to_file ( img_vector, dbgdata )
+  # dbgdata = 'stored_' + str(img_id) + '.out'
+  # n_elem = vector_to_file ( img_vector, dbgdata )
 
   return retval
 
@@ -190,26 +205,14 @@ print ( f_prfx(), '---- functions defined ---- ' )
 ora_conn = oracledb.connect(user="scott", password="tiger",
                               host="localhost", port=1521, service_name="freepdb1")
 
+# input type handler, this will convert numpy arrays to vectors ?
+# ora_conn.inputtypehandler = input_type_handler
+
 cursor = ora_conn.cursor()
 for row in cursor.execute("select * from v$version"):
     print( f_prfx(), row )
 
-# define the input type handler, this will convert numpy arrays to vectors ?
-ora_conn.inputtypehandler = input_type_handler
-
 print ( f_prfx(), '---- db connetion made ---- ' )
-
-# -- Example usage
-# img_path = 'img1.jpg'
-# image_name = 'first image img1'
-# stored_id = store_image_ora ( img_path , ora_conn ) 
-# print ( f_prfx(), ' ---- img stored, id ', stored_id, ' ---- ' ) 
-
-# -- generate vector and store in db
-# vector = extract_vector(img_path)
-# store_vector_in_db(image_name, vector, ora_conn)
-
-ora_conn.commit () 
 
 # -- now loop over a directory
 image_directory = '/Users/pdvbv/zz_imgs/'
@@ -221,8 +224,8 @@ print ( f_prfx(), " ---- looping over jpg files ---- " )
 
 # to debug cos-dist.. initiate a prev_vect, 
 # and compare every 2 vectors 
-prev_vect =  numpy.ones ( 2048, float ) 
-vect      =  numpy.ones ( 2048, float ) 
+prev_vect =  numpy.ones ( 2048, numpy.float32 ) 
+vect      =  numpy.ones ( 2048, numpy.float32 ) 
 
 # -- Loop over all .jpg files in the directory
 for filename in os.listdir(image_directory):
@@ -235,7 +238,12 @@ for filename in os.listdir(image_directory):
     # print ( f_prfx(), ' ---- img_id ', vec_img_id ' ---- ' ) 
 
     vect = extract_vector(img_path)
+
     # print ( f_prfx(), " ---- file : ", filename, " extracted..."  )
+
+    # dbgdata = 'dbg_' + str(vec_img_id) + '.out'
+    # n_elem = vector_to_file ( vect, dbgdata )
+    # print ( f_prfx(), '-- saved, array len: ', n_elem, ' to file: ', fdata )
 
     vec_img_vect_id = store_vector_in_ora(vec_img_id, vect, ora_conn)
 
@@ -245,11 +253,7 @@ for filename in os.listdir(image_directory):
 
     # verify: cos distan with prev.
     cos_dist =  numpy.dot(prev_vect, vect) / (numpy.linalg.norm(prev_vect) * numpy.linalg.norm(vect)) 
-    print ( f_prfx(), ' -- Cos Dist with previous: ', cos_dist, ' ---- ' )
-
-    dbgdata = 'dbg_' + str(vec_img_id) + '.out'
-    # n_elem = vector_to_file ( vect, dbgdata )
-    # print ( f_prfx(), '-- saved, array len: ', n_elem, ' to file: ', fdata )
+    print ( f_prfx(), ' -- Cos similiary with previous: ', cos_dist, ' ---- ' )
 
     # keep vector to calculate cos-dist with next
     prev_vect = vect

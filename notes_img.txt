@@ -47,5 +47,7 @@ run first demo oracle, same files as pg.
  - python3 p3.py 
  - SQL> @demo2_ora.sql   : to see similarites + diff..
  - DEBUG... bcse outcomes are diff?
-
+  - W/Out the input handler ? 
+  - read back and verify ? 
+  - do the cos-dist in python and store separately ?
 
