@@ -51,3 +51,25 @@ run first demo oracle, same files as pg.
   - read back and verify ? 
   - do the cos-dist in python and store separately ?
 
+
+Remarks..
+
+After litteally DAYS of toil, I got it to work.
+Two thing seemed to determine success.. 
+
+1st, Not using the input-handler, but defining my own as :new_arr =  array.array( "d" numpy_arr)
+
+2nd, Using old fashioned list of bind-vars as [], and not using :bindvar=localvar for vector-operations.
+
+
+what further hindered me: 
+
+3rd, use of "returning". I Really want to capture the new id, 
+I've struggle with the "returning-clause in python and the cx_oracle as well: 
+it never worked properly there, but it _seemed_ to work now. 
+Only not when combined with any vector operation ? ? 
+
+4th, I insisted on using numpy for vector-generation, 
+spent too much time on trying to make ins/upd work with a numpy-array. 
+(nice to know: the cos-similarity of vectors with numpy is Identical to the dbms_vector ones...)
+
