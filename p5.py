@@ -125,7 +125,7 @@ def extract_vector(img_path):
  
 def store_vector_in_ora(img_id, img_vector, conn):
 
-  sql =  """
+  sql_old =  """
   insert into vec_img_vect ( img_id,      img_vector,  gen_by  )
                     values ( :stored_id,  :bind_vect,  'stored by p3.py' )
   returning id into :vect_id
@@ -143,25 +143,15 @@ def store_vector_in_ora(img_id, img_vector, conn):
   # variable to catch returning 
   vect_id = vec_cur.var(int)
   
-  # using array, and remove need for iput handler?
-  # note: hardcoded type d is a float-64, but column is f=float32 ? 
+  # using array.array, and remove need for iput handler?
+  # note: hardcoded type d is a float-64, but column is f=float32 ??
   new_arr = array.array ( "d", img_vector )   # but vector is numpy-array float32 ??
-  # new_arr =  img_vector.tolist()  # try with list
-  # new_arr = img_vector 
 
-  # print ( f_prfx(), " -- new_arr: ", new_arr )
+  # do the insert, :bind_var => local-var, note: None of this every Worked ?? 
+  # vec_cur.execute ( sql_old, stored_id=img_id, bind_vect=img_vector, vect_id=vect_id ) 
+  # vec_cur.execute ( sql_old, stored_id=img_id, bind_vect=new_arr, vect_id=vect_id ) 
 
-  # print ( f_prfx(), " -- new_arr.ndim  "   , len (new_arr ) ) 
-  # print ( f_prfx(), " -- new_arr.shape "   , new_arr.shape ) 
-  # print ( f_prfx(), " -- new_arr.size "    , new_arr.size ) 
-  # print ( f_prfx(), " -- new_arr.dtype "   , new_arr.dtype ) 
-  # print ( f_prfx(), " -- new_arr.itemsize ", new_arr.itemsize ) 
-
-  # do the insert, :bind_var => local-var 
-  # vec_cur.execute ( sql, stored_id=img_id, bind_vect=img_vector, vect_id=vect_id ) 
-  # vec_cur.execute ( sql, stored_id=img_id, bind_vect=new_arr, vect_id=vect_id ) 
-
-  # try creating + update
+  # try creating without vector, update later
   vec_cur.execute ( sql, stored_id=img_id, vect_id=vect_id ) 
 
   # catch the out-var and return it, in case we need it later
@@ -171,7 +161,6 @@ def store_vector_in_ora(img_id, img_vector, conn):
  
   # now fresh cursor to update
   cur2 = ora_conn.cursor()
-  # cur2.execute ( "update vec_img_vect set img_vector = :1 where img_id = :2 " , [ new_arr, img_id ]  )
   cur2.execute ( "update vec_img_vect set img_vector = :1 where id = :2 " , [ new_arr, retval ]  )
 
   # put vectordata in file again..
@@ -180,7 +169,7 @@ def store_vector_in_ora(img_id, img_vector, conn):
 
   return retval
 
-  # ---- end of store_vector_in_db postgres ------- 
+  # ---- end of store_vector_in_ora ------- 
 
 
 def vector_to_file ( vec, fname ):
