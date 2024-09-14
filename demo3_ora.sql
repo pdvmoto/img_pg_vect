@@ -33,3 +33,9 @@ where 1=1
   and v1.id < v2.id
 order by v1.id ; 
 
+select i1.id, i2.id, i1.fname, i2.fname  
+    ,  1 - vector_distance ( v1.img_vector,v2.img_vector, COSINE )  cos_sim_fn
+    ,  1 - ( v1.img_vector <=> v2.img_vector  )                     cos_sim_op
+from img i1, imd i2
+where i1.id < i2.id
+order by i1.id;
