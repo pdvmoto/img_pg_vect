@@ -73,3 +73,16 @@ Only not when combined with any vector operation ? ?
 spent too much time on trying to make ins/upd work with a numpy-array. 
 (nice to know: the cos-similarity of vectors with numpy is Identical to the dbms_vector ones...)
 
+
+-- 21 Oct 2024 -- 
+
+about to try..
+pip install numpy pandas tensorflow torch torchvision PIL
+
+also needed : 
+pip3 install tf_keras
+
+in python: 
+from sentence_transformers import SentenceTransformer, util
+from PIL import image
+
