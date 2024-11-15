@@ -72,9 +72,9 @@ print ( f_prfx(), '---- functions defined ---- ' )
 
 # Connect to the PostgreSQL database
 conn = psycopg2.connect(
-    dbname   ='postgres',
-    user     ='postgres',
-    password ='postgres',
+    dbname   ='yugabyte',
+    user     ='yugabyte',
+    password ='yugabyte',
     host     ='localhost',
     port     ='5432'
 )
