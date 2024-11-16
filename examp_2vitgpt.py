@@ -11,10 +11,15 @@ model = FlaxVisionEncoderDecoderModel.from_pretrained(loc)
 
 # We will verify our results on an image of cute cats
 # url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-filepath= str ( '/Users/pdvbv/zz_img/5_building.jpg' ) 
+
+print ( ' ---- main : ---- ' ) 
+
+filepath= str ( '/Users/pdvbv/zz_img/6_room.jpg' ) 
 
 with Image.open( filepath) as img:
     pixel_values = feature_extractor(images=img, return_tensors="np").pixel_values
+
+print ( ' ---- main : pixels extracted ---- ' ) 
 
 def generate_step(pixel_values):
 
@@ -23,8 +28,6 @@ def generate_step(pixel_values):
     preds = [pred.strip() for pred in preds]
 
     return preds
-
-print ( ' ---- main : ---- ' ) 
 
 preds = generate_step(pixel_values)
 
