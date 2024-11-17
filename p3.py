@@ -61,7 +61,6 @@ def store_image_ora ( img_dir, img_fn , ora_conn ):
 
   # do the insert, input-bind-var => local_var
   img_cur.execute ( sql, fpath=img_dir, fname=img_fn, binary_image=binary_image, img_id=img_id ) 
-
   # catch out-var
   retval = img_id.getvalue()[0]
 
@@ -126,9 +125,9 @@ def extract_vector(img_path):
 def store_vector_in_ora(img_id, img_vector, conn):
 
   sql =  """
-  insert into vec_img_vect ( img_id,      img_vector,  gen_by  )
-                    values ( :stored_id,  :bind_vect,  'stored by p3.py' )
-  returning id into :vect_id
+  INSERT INTO vec_img_vect (     img_id,  img_vector,  gen_by            )
+                    VALUES ( :stored_id,  :bind_vect,  'ResNet50, p3.py' )
+  RETURNING id INTO :vect_id
   """
 
   # cursor
@@ -138,12 +137,10 @@ def store_vector_in_ora(img_id, img_vector, conn):
   vect_id = vec_cur.var(int)
   
   # using array, and remove need for iput handler?
-  # note: hardcoded type d is a float-64, but column is f=float32 ? 
+  # note: hardcoded type d is a float-64, but column is f=float32 ???
   new_arr = array.array ( "d", img_vector ) 
-  # new_arr = img_vector 
 
   # print ( f_prfx(), " -- new_arr: ", new_arr )
-
   # print ( f_prfx(), " -- new_arr.ndim  "   , len (new_arr ) ) 
   # print ( f_prfx(), " -- new_arr.shape "   , new_arr.shape ) 
   # print ( f_prfx(), " -- new_arr.size "    , new_arr.size ) 
@@ -151,17 +148,16 @@ def store_vector_in_ora(img_id, img_vector, conn):
   # print ( f_prfx(), " -- new_arr.itemsize ", new_arr.itemsize ) 
 
   # do the insert, :bind_var => local-var 
-  # vec_cur.execute ( sql, stored_id=img_id, bind_vect=img_vector, vect_id=vect_id ) 
   vec_cur.execute ( sql, stored_id=img_id, bind_vect=new_arr, vect_id=vect_id ) 
 
   # catch the out-var and return it, in case we need it later
   retval = vect_id.getvalue()[0]
 
-  print ( f_prfx(), ' -- stored, vect_id was: ', retval, ' ---- ' ) 
+  # print ( f_prfx(), ' -- stored, vect_id was: ', retval, ' ---- ' ) 
  
-  # put vectordata in file again..
-  dbgdata = 'stored_' + str(img_id) + '.out'
-  n_elem = vector_to_file ( img_vector, dbgdata )
+  # for debug, put vectordata in file again..
+  # dbgdata = 'stored_' + str(img_id) + '.out'
+  # n_elem = vector_to_file ( img_vector, dbgdata )
 
   return retval
 

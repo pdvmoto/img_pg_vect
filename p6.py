@@ -242,8 +242,8 @@ print ( f_prfx(), '---- db connetion made, check version ---- ' )
 
 # -- now loop over a directory
 # image_directory = './'
-# image_directory = '/Users/pdvbv/zz_img/'
-image_directory = '/Users/pdvbv/data/fotos/camera/2024_07_13/'
+image_directory = '/Users/pdvbv/zz_imgs/'
+# image_directory = '/Users/pdvbv/data/fotos/camera/2024_07_13/'
 # image_directory = '/Users/pdvbv/Fotos/camera/2023_10_10/'
 
 # initiate db objects, all in one program..

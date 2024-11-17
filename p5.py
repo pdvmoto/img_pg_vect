@@ -204,7 +204,7 @@ for row in cursor.execute("select * from v$version"):
 print ( f_prfx(), '---- db connetion made ---- ' )
 
 # -- now loop over a directory
-image_directory = '/Users/pdvbv/zz_img/'
+image_directory = '/Users/pdvbv/zz_imgs/'
 # image_directory = '/Users/pdvbv/fotos/camera/2024_04_16/'
 # image_directory = '/Users/pdvbv/Fotos/camera/2023_10_10/'
 

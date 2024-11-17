@@ -227,8 +227,8 @@ print ( f_prfx(), '---- cos dist betw 1s and 2s : ', cos_dist, ' ---- ' )
 
 
 # -- now loop over a directory
-image_directory = '/Users/pdvbv/tmp/'
-# image_directory = '/Users/pdvbv/zz_imgs/'
+# image_directory = '/Users/pdvbv/tmp/'
+image_directory = '/Users/pdvbv/zz_imgs/'
 # image_directory = '/Users/pdvbv/fotos/camera/2024_04_16/'
 # image_directory = '/Users/pdvbv/Fotos/camera/2023_10_10'
 
