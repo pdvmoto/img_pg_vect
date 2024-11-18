@@ -6,7 +6,7 @@ from PIL import Image
 import requests
 
 image = Image.open( '/Users/pdvbv/zz_imgs/6_motorcycle.jpg')
-image = Image.open( '/Users/pdvbv/zz_imgs/92_complex.jpg')
+# image = Image.open( '/Users/pdvbv/zz_imgs/92_complex.jpg')
 
 # you can specify the revision tag if you don't want the timm dependency
 processor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50", revision="no_timm")
@@ -26,7 +26,7 @@ for score, label, box in zip(results["scores"], results["labels"], results["boxe
     box = [round(i, 2) for i in box.tolist()]
     # print(
     #         f"Detected {model.config.id2label[label.item()]} with confidence "
-    #         f"{round(score.item(), 3)} at location {box}"
+    #         f"{round(score.item(), 9)} at location {box}"
     # )
-    print ( 'file: xyz', 'found: ', model.config.id2label[label.item()], round(score.item(), 3) ) 
+    print ( 'file: xyz', 'found: ', model.config.id2label[label.item()], round(score.item(), 9) ) 
 

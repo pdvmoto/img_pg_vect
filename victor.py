@@ -1,7 +1,8 @@
 #
 # victor.py : enter a query to inspect vector(s) from oracle-database ...
 #
-# based on What is our vector victor? (yes, that movie from 1980)
+# background:
+#   based on What is our vector victor? (yes, that movie from 1980)
 #
 # Stern Warning: 
 #   This tool uses "dynamic SQL", 
@@ -11,7 +12,15 @@
 #
 # todo:
 # - replace hardcoded connect-strings by conn-name
-# - also output to file e.g. victor.out
+# - also output to file e.g. victor.out ( but pipe-tee a.out works fine)
+# - allow "run" or run-10 withtout stopping at every record
+# - allow silent or scripted run: dont require keyboard input
+# - devise some automated testing, and test more extensively
+# - Graceful Exit on SQL-error (gently report ORA-00942 etc..).
+# - enable use with psycopg2 as well
+# - display subsequent columns if the cursor contains more afer the vector
+# - remove need for quotes around arg[1] (nah...)
+# - additional hash-total to allow equality-check between vectors
 # - lots more, but not prio atm
 #
 
@@ -76,7 +85,7 @@ err_no_list="""
 ora_conn = oracledb.connect(user="scott", password="tiger",
                               host="localhost", port=1521, service_name="freepdb1")
 
-print ('\nYour Connection is: ' )
+print ('Your Connection is: ' )
   
 cursor = ora_conn.cursor()
 for row in cursor.execute ( sql_show_conn ):
@@ -102,8 +111,8 @@ n = len(sys.argv)
 
 # now start sql and real work
 
-sql_for_vector=""" select vect from img_vector  where id = 1 """
-sql_for_vector=""" select img_vector from vec_img_vect where id = 1 """
+# sql_for_vector=""" select vect from img_vector  where id = 1 """
+# sql_for_vector=""" select img_vector from vec_img_vect where id = 1 """
 
 # if arg1: use it as SQL..
 if len(sys.argv) == 2:
@@ -138,7 +147,7 @@ for row in cursor.execute( sql_for_vector):
     n_hashtot = 0.0
 
     for elem in row[0]:
-      print ( '.. [', n_elem, ']: ', f"{elem:+5,.9f}" ) 
+      print ( '.. [', n_elem, ']: ', f"{elem:+5,.12}" ) 
       n_hashtot = n_hashtot + elem
       n_elem = n_elem + 1
 
@@ -151,6 +160,8 @@ for row in cursor.execute( sql_for_vector):
       print ( ' ' )
       hit_enter = input ( "hit enter for next, Contr-C to quit ... " )
       print ( ' ' )
+      # suggestion: 0=run forever, n>0=run n records, enter=> n=1
+
     except KeyboardInterrupt:
       print ( ' ' )
       print ( '.. Interrupt, stopped cursor-fetching' ) 
