@@ -1,5 +1,7 @@
 import requests
 
+# note: error on CUDA install.. try later
+
 import torch
 from PIL import Image
 from transformers import AutoProcessor, AutoModelForCausalLM 
@@ -10,6 +12,7 @@ filepath='/Users/pdvbv/zz_imgs/8_flowers.jpg'  # OK
 filepath='/Users/pdvbv/zz_imgs/2_view.jpg' 
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
+devide = "cpu"
 torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
 model = AutoModelForCausalLM.from_pretrained("microsoft/Florence-2-large", torch_dtype=torch_dtype, trust_remote_code=True).to(device)

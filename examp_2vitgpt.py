@@ -15,6 +15,7 @@ model = FlaxVisionEncoderDecoderModel.from_pretrained(loc)
 print ( ' ---- main : ---- ' ) 
 
 filepath= str ( '/Users/pdvbv/zz_img/6_room.jpg' ) 
+filepath= str ( '/Users/pdvbv/zz_img/5_building.jpg' ) 
 
 with Image.open( filepath) as img:
     pixel_values = feature_extractor(images=img, return_tensors="np").pixel_values

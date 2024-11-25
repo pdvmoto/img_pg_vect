@@ -1,5 +1,8 @@
+
 import time
 from datetime import datetime 
+
+from PIL import Image, ImageDraw
 
 # need functions:
 # - tmr_start() : set start point, return now()    global variable: g_start_total
@@ -41,7 +44,7 @@ print ( ' --- start  : ', tmr_start() )
 print ( ' --- set    : ', tmr_set() )
 print ( ' --- dur    : ', tmr_durat() )
 
-time.sleep ( 1 ) 
+time.sleep ( 0.5 ) 
 print ( ' \n --- dur    : ', tmr_durat() )
 print ( ' --- total  : ', tmr_total() )
 print ( ' --- dur2   : ', tmr_durat() )
@@ -51,11 +54,48 @@ print ( ' --- dur3   : ', tmr_durat() )
 print ( ' --- re-set : ', tmr_set() )
 print ( ' --- dur4   : ', tmr_durat() )
 
-time.sleep ( 1 ) 
+time.sleep ( 0.5 ) 
 print ( '\n --- total4 : ', tmr_total() )
 print (   ' --- dur    : ', tmr_durat() )
 time.sleep ( 1) 
 print ( '\n --- re-set : ', tmr_set() )
 print (   ' --- dur0   : ', f" = {tmr_durat():9.5f}" )
 print (   ' --- total5 : ', f" = {tmr_total():9.5f}" )
+
+
+print ( '\n --- timer-re-set : ', tmr_set() )
+
+fullpath = '/Users/pdvbv/zz_imgs/1_udine.jpg'
+
+l_img = Image.open ( fullpath  )
+
+img_width, img_height = l_img.size
+
+x1 = img_width / 4 
+x2 = x1 + ( img_width / 2 )
+
+y1 = img_height / 4 
+y2 = y1 + ( img_height / 2 )
+
+l_color_red = ( 255, 0,0 )
+
+print (   ' --- opened, elapsed  : ', f" = {tmr_durat():9.5f} sec" )
+
+l_img.show ()
+
+print (   ' --- shown, elapsed   : ', f" = {tmr_durat():9.5f} sec" )
+
+# make draw-object + work on it
+
+tmr_set()
+
+# draw works on the local image, still l_img
+l_draw = ImageDraw.Draw ( l_img ) 
+l_draw.rectangle([x1, y1, x2, y2], outline=l_color_red, width=4)
+
+print (   ' --- drawn, elapsed   : ', f" = {tmr_durat():9.5f} sec" )
+
+l_img.show()
+
+print (   ' --- re-shown, elapsed   : ', f" = {tmr_durat():9.5f} sec" )
 
