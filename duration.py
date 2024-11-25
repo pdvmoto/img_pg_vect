@@ -12,6 +12,8 @@ from datetime import datetime
 # todo: use more than 1 timer..so they dont interfere. allow nested timeing
 #
 
+# ----- timers here ---- 
+
 # define global vars, of type now()
 g_tmr_total = datetime.now()
 g_tmr_durat = datetime.now()
@@ -32,10 +34,19 @@ def tmr_dur ():
   durat = ( datetime.now() - g_tmr_durat ).total_seconds()
   return  durat
 
+# ----- timers defined ---- 
 
+# test code
 print ( ' --- start : ', tmr_start() )
 print ( ' --- set   : ', tmr_set() )
 print ( ' --- dur   : ', tmr_dur() )
 print ( ' --- total : ', tmr_total() )
 
+print ( ' --- dur2   : ', tmr_dur() )
+print ( ' --- total2 : ', tmr_total() )
+
+
+print ( ' --- re-set: ', tmr_set() )
+print ( ' --- total : ', tmr_total() )
+print ( ' --- dur   : ', tmr_dur() )
 
