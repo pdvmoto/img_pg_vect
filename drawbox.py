@@ -65,7 +65,7 @@ print (   ' --- total5 : ', f" = {tmr_total():9.5f}" )
 
 print ( '\n --- timer-re-set : ', tmr_set() )
 
-fullpath = '/Users/pdvbv/zz_imgs/1_udine.jpg'
+fullpath = '/Users/pdvbv/zz_imgs/2_view.jpg'
 
 l_img = Image.open ( fullpath  )
 
