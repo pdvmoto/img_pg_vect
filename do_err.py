@@ -218,5 +218,11 @@ pp    ( ' ' )
 pp    ( ' Query was: [', sql_for_qry, ']' )
 pp    ( ' ' ) 
 
-f_inspect_obj ( 'cursr', cursor ) 
+if hasattr ( cursor, 'len' ):
+  pp ( 'cursorhas len' ) 
+else:
+  pp ( 'cursor doent have len' ) 
+
+f_inspect_obj ( 'cursr desc', cursor.description ) 
+f_inspect_obj ( 'cursr itself ', cursor ) 
 

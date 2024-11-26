@@ -15,8 +15,12 @@ def f_inspect_obj( s_objname, o_obj ):
   print ( f_prfx(), "o_obj type  : ",  type (o_obj ) )
 
   if o_obj != None:
+    if hasattr ( o_obj, 'len' ):
+      obj_len = len ( o_obj ) 
+    else:
+      obj_len = 0
 
-    print ( f_prfx(), "o_obj length: ",  len (o_obj ) )
+    print ( f_prfx(), "o_obj length: ",  obj_len )
     print ( f_prfx(), "o_obj dir   : ",  dir (o_obj ) )
     print ( " " )
     # hit_enter = input ( f_prfx() + "meta data from " + s_objname + "...., hit enter.." )
