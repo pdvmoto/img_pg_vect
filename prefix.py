@@ -11,7 +11,7 @@ def f_prfx():
   # set a prefix for debug-output, sourcefile + timestamp
 
   s_timessff = str ( datetime.now() )[11:23]
-  s_prefix = pyfile + ' ' + s_timessff + ': '
+  s_prefix = pyfile + ' ' + s_timessff + ' '
 
   # print ( prfx, ' in function f_prfx: ' , s_prefix )
 
