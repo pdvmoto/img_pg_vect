@@ -1,6 +1,5 @@
-
 #
-# ora_logon.py: , using .env, dotenv, and return the connection.
+# ora_login.py: , using .env, dotenv, and return the connection.
 # another way of isolating the logon cred + avoid typing code
 #
 # todo: 
@@ -11,8 +10,10 @@ import    os
 import    oracledb
 from      dotenv   import load_dotenv
 
+
 # define function to have any arguments, 
 # this allow to replace existing functions. 
+
 def ora_logon ( *args ):
 
   # customize this sql to show connetion info on logon
@@ -39,6 +40,9 @@ def ora_logon ( *args ):
   order by 1
   """
 
+  # --- dotenv() specific --- ----------------------------
+  # --- but feel free to code your own "credentials" here.
+
   load_dotenv()
 
   # get + verify..
@@ -48,8 +52,11 @@ def ora_logon ( *args ):
   ora_port    = os.getenv ( 'ORA_PORT' )
   ora_sid     = os.getenv ( 'ORA_SID' )
 
+  # --- dotenv() specific ------------------------------
+
+  # 
   # verify... dont print this at work.
-  print    ( ' ora_login: ' + ora_user + ' / ****** @ ' 
+  print    ( ' ora_login: ' + ora_user + ' / **************** @ ' 
            + ora_server + ' ; ' + ora_port + ' \\ ' + ora_sid )
 
   # create the actual connection
@@ -71,9 +78,8 @@ def ora_logon ( *args ):
 
   return ora_conn  # ------- logon and return conn object --- 
 
-# ---- some  test code below... ---- 
 
-# ora_conn = ora_login () 
+# ---- some  test code below... ---- 
 
 sql_test = """
   select object_type, count (*) 
@@ -81,10 +87,23 @@ sql_test = """
    group by object_type  
 """
 
-# cur_logon = ora_conn.cursor ()
-# for row in cur_logon.execute ( sql_test ):
-#   print ( ' ora_logon:', row ) 
-# 
-# print ()
-# print ( ' ora_logon: tested' ) 
-# print ()
+if __name__ == '__main__':
+
+  print ()
+  print ( ' ---- testing ora_logon function ----- ' )
+  print ()
+
+  ora_conn = ora_logon ()
+
+  print ()
+  print ( ' ---- if connected, test a query ----- ' )
+  print ()
+
+  cur_logon = ora_conn.cursor ()
+  for row in cur_logon.execute ( sql_test ):
+    print ( ' ora_logon:', row ) 
+  
+  print ()
+  print ( ' ---- ora_logon: tested with count * for user_objects ---- ' ) 
+  print ()
+

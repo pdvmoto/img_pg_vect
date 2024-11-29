@@ -15,8 +15,7 @@ from      datetime  import  datetime
 print ( 'for the record: perfcount and process_time: ', time.perf_counter(), time.process_time() )
 print ()
 
-
-# in case we fogert..
+# in case we forget..
 def f_prfx():
   return " localprfx: " 
 
@@ -32,23 +31,23 @@ pp    ()
 pp    ( ' ----- imports done, now testing duration.py ---- ' ) 
 pp    ()
 
-print ( ' i-- start  : ', tmr_start() )
-print ( ' i-- set    : ', tmr_set() )
+print ( ' -- start  : ', tmr_start() )
+print ( ' -- set    : ', tmr_set() )
 
 time.sleep ( 1 ) 
-print ( ' \n i-- dur    : ', tmr_durat() )
-print ( ' i-- total  : ', tmr_total() )
-print ( ' i-- dur2   : ', tmr_durat() )
-print ( ' i-- re-set : ', tmr_set() )
-print ( ' i-- dur4   : ', tmr_durat() )
+print ( ' \n -- dur    : ', tmr_durat() )
+print ( ' -- total  : ', tmr_total() )
+print ( ' -- dur2   : ', tmr_durat() )
+print ( ' -- re-set : ', tmr_set() )
+print ( ' -- dur4   : ', tmr_durat() )
 
 time.sleep ( 1 ) 
-print ( '\n i-- total4 : ', tmr_total() )
-print (   ' i-- dur    : ', tmr_durat() )
+print ( '\n -- total4 : ', tmr_total() )
+print (   ' -- dur    : ', tmr_durat() )
 time.sleep ( 1) 
-print ( '\n i-- re-set : ', tmr_set() )
-print (   ' i-- dur0   : ', f" = {tmr_durat():9.5f}" )
-print (   ' i-- total5 : ', f" = {tmr_total():9.5f}" )
+print ( '\n -- re-set : ', tmr_set() )
+print (   ' -- dur0   : ', f" = {tmr_durat():9.5f}" )
+print (   ' -- total5 : ', f" = {tmr_total():9.5f}" )
 
 pp    ()
 pp    ( ' ----- testing inspect_obj.py ---- ' ) 

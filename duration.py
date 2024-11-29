@@ -45,15 +45,19 @@ def tmr_durat ():
 # ----- timers defined ---- 
 
 # test code, uncomment if testing
-# print ( ' --- start  : ', tmr_start() )
-# print ( ' --- set    : ', tmr_set() )
-# print ( ' --- dur    : ', tmr_durat() )
 
-# time.sleep ( 1 ) 
-# print ( ' \n --- dur    : ', tmr_durat() )
-# print ( ' --- total  : ', tmr_total() )
-# print ( ' --- dur2   : ', tmr_durat() )
-# print ( ' --- total2 : ', tmr_total() )
+if __name__ == '__main__':
+
+  print ( ' --- start  : ', tmr_start() )
+  print ( ' --- set    : ', tmr_set() )
+  print ( ' --- dur    : ', tmr_durat() )
+
+  time.sleep ( 1 ) 
+  print ( ' \n --- dur    : ', tmr_durat() )
+  print ( ' --- total  : ', tmr_total() )
+  print ( ' --- dur2   : ', tmr_durat() )
+  print ( ' --- total2 : ', tmr_total() )
+
 # print ( ' --- total3 : ', tmr_total() )
 # print ( ' --- dur3   : ', tmr_durat() )
 # print ( ' --- re-set : ', tmr_set() )

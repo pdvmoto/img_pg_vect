@@ -12,7 +12,7 @@
 #    Deal With It. ;-)
 #
 # todo:
-# - consider using conn_name from SQLcl
+# - consider using credentials, conn_name, from SQLcl
 # - also output to file e.g. a.out ( but pipe-tee a.out works fine)
 # - allow for a pager, and space / enter / nr to continue (never if arg-1 provided)
 # - allow silent or scripted run: dont require keyboard input (+/- done)
