@@ -13,7 +13,9 @@ from datetime import datetime
 # - tmr_set()   : set point to measure, now(), also re-sset.. global_var: g_start_dur
 # - tmr_durat() : get duration in sec/ms since last set, the stopwatch inside the program
 # 
-# todo: use more than 1 timer..so they dont interfere. allow nested timeing
+# todo: 
+# - use more than 1 timer..so they dont interfere. allow nested timeing
+# - use generic trick to time total of a program-run
 #
 
 # ----- timers here ---- 

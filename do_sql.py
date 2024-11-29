@@ -16,6 +16,7 @@
 # - also output to file e.g. a.out ( but pipe-tee a.out works fine)
 # - allow for a pager, and space / enter / nr to continue (never if arg-1 provided)
 # - allow silent or scripted run: dont require keyboard input (+/- done)
+# - allow Stealth: only output row-lists, no other output, allow csv-spooling
 # - devise some automated testing, and test more extensively
 # - Graceful Exit on SQL-error (gently report ORA-00942 etc..).
 # - enable use with other drivers, databases as well
@@ -45,50 +46,13 @@ print ( ' ' )
 from      duration      import *
 from      inspect_obj   import *
 from      prefix        import *
+from      ora_login     import *
 
 
 pp    ( ' ' )
 pp    ( "--------- local utilities imports done  -------------- " )
 pp    ( ' ' )
 
-
-
-sql_show_conn="""
-  select 2 as ordr
-     , 'version : ' ||  substr ( banner_full, -12) as txt
-  from v$version 
-UNION ALL
-  select 1
-     , 'user    : '|| user || ' @ ' || global_name|| ' ' as txt
-  FROM global_name     gn
-UNION ALL
-  SELECT 3        
-     , 'prompt  : ' || user
-       || ' @ ' ||db.name
-       || ' @ '|| SYS_CONTEXT('USERENV','SERVER_HOST')
-       || decode  (SYS_CONTEXT('USERENV','SERVER_HOST')
-            , 'ip-172-20-2-109', ' (PROD)'
-            , 'ip-172-20-0-226', ' (ACC)'
-            , 'ip-172-20-0-23',  ' (SE)'
-            , '98b6d46dd637',    ' (xe-dev)'
-            , '98eac28a59c0',    ' (dckr-23c)'
-            , '2c4a51017a44',    ' (dckr-23ai)'
-            , ' (-envname-)')
-       || ' > '
-  FROM    v$database      db
-order by 1
-"""
-
-err_no_list="""
-..
-.. Warning: 
-..
-.. Query result is not a vector/list.
-.. Please provide a Query that returns a List (vector) as first column.
-..
-.. Example: Select vector from table ;
-..
-"""
 
 pp    ( ' ' ) 
 pp    ( '--------- constants defined ... ---------- ' )
@@ -123,38 +87,8 @@ pp    ( ' ' )
 pp    ( '--------- functions defined, start of main..  ---------- ' )
 pp    ( ' ' ) 
 
+ora_conn = ora_logon () 
   
-# get env, which should contain the connecion variables, no dflts provided..
- 
-load_dotenv()
-  
-# get + verify..   
-ora_user    = os.getenv ( 'ORA_USER' )
-ora_pwd     = os.getenv ( 'ORA_PWD' )
-ora_server  = os.getenv ( 'ORA_SERVER' )
-ora_port    = os.getenv ( 'ORA_PORT' )
-ora_sid     = os.getenv ( 'ORA_SID' )
-
-# verify... dont print this at work.
-pp    ( f_prfx() + ora_user + ' / ****** @ ' + ora_server , ' ; ' + ora_port + ' \\ ' + ora_sid )
-  
-  
-ora_conn = oracledb.connect (
-    user          = ora_user
-  , password      = ora_pwd    
-  , host          = ora_server 
-  , port          = ora_port   
-  , service_name  = ora_sid    
-)
-
-print ( f_prfx(), ' --- Connection is: --->' )
-
-cursor = ora_conn.cursor()
-for row in cursor.execute ( sql_show_conn ):
-  pp   ( row )
-
-print( f_prfx(), '<-- Connection ' )
-
 pp    ( ' ' )
 pp    ( "-----------------  connection opened ------------- " )
 pp    ( ' ' )
@@ -179,15 +113,12 @@ n = len(sys.argv)
 
 # now start sql and real work
 
-# sql_for_vector=""" select vect from img_vector  where id = 1 """
-# sql_for_vector=""" select img_vector from vec_img_vect where id = 1 """
-
 # if arg1: use it as SQL..
 if len(sys.argv) == 2:
   sql_for_qry = sys.argv[1] 
 else:
-  print ( ' ' )
-  sql_for_qry = input ( "do_py: SQL > " )
+  print    ( ' ' )
+  sql_for_qry = input ( "do_sql.py: SQL > " )
 
 sql_for_qry = chop_off_semicolon ( sql_for_qry ) 
 

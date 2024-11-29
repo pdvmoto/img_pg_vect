@@ -49,7 +49,7 @@ def ora_logon ( *args ):
   ora_sid     = os.getenv ( 'ORA_SID' )
 
   # verify... dont print this at work.
-  print    ( ' ora_logon: ' + ora_user + ' / ****** @ ' 
+  print    ( ' ora_login: ' + ora_user + ' / ****** @ ' 
            + ora_server + ' ; ' + ora_port + ' \\ ' + ora_sid )
 
   # create the actual connection
@@ -61,20 +61,19 @@ def ora_logon ( *args ):
     , service_name  = ora_sid
   )
 
-  print    ( ' ora_logon: --- Connection is: --->' )
+  print    ( ' ora_login: --- Connection is: --->' )
 
   cursor = ora_conn.cursor()
   for row in cursor.execute ( sql_show_conn ):
-    print( ' ora_logon:', row[1] )
+    print  ( ' ora_login:', row[1] )
 
-  print    ( ' ora_logon:  <-- Connection  ---- ' )
+  print    ( ' ora_login:  <-- Connection  ---- ' )
 
   return ora_conn  # ------- logon and return conn object --- 
 
+# ---- some  test code below... ---- 
 
-# ---- some  test code here... ---- 
-
-ora_conn = ora_logon () 
+# ora_conn = ora_login () 
 
 sql_test = """
   select object_type, count (*) 
@@ -82,10 +81,10 @@ sql_test = """
    group by object_type  
 """
 
-cur_logon = ora_conn.cursor ()
-for row in cur_logon.execute ( sql_test ):
-  print ( ' ora_logon:', row ) 
-
-print ()
-print ( ' ora_logon: tested' ) 
-print ()
+# cur_logon = ora_conn.cursor ()
+# for row in cur_logon.execute ( sql_test ):
+#   print ( ' ora_logon:', row ) 
+# 
+# print ()
+# print ( ' ora_logon: tested' ) 
+# print ()

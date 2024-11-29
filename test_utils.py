@@ -5,8 +5,16 @@
 # - prefix.py          : debug and log printing utility
 # - ora_logon.py
 
-import time
-from datetime import datetime 
+print ( ' ---- test_utils.py --- ' ) 
+
+print ( ' ---- test_utils.py first do imports ..--- ' ) 
+
+import    time
+from      datetime  import  datetime 
+
+print ( 'for the record: perfcount and process_time: ', time.perf_counter(), time.process_time() )
+print ()
+
 
 # in case we fogert..
 def f_prfx():
@@ -19,14 +27,9 @@ from  prefix        import *
 from  ora_login     import *
 
 
-def pq ( *argv ):
-  print ( f_prfx(), ' : ',  *argv )
-  return 0   # consider returning nr-args, or length of string
-
-
 # test code
 pp    ()
-pp    ( ' ----- testing duration.py ---- ' ) 
+pp    ( ' ----- imports done, now testing duration.py ---- ' ) 
 pp    ()
 
 print ( ' i-- start  : ', tmr_start() )
@@ -55,10 +58,53 @@ lst  = [1, 2,3 ]
 f_inspect_obj ( 'list ', lst ) 
 
 pp    ()
-pp    ( ' ----- testing inspect_obj.py ---- ' ) 
+pp    ( ' ----- next testing prefix..  ---- ' ) 
 pp    ()
-print ( f_prfx(), '..with prefix...' )
+pp    ( f_prfx(), '..with double? prefix...' )
 
-pp    ( 'prefix = [ + f_prfx() + ] ..from pp ...' )
+pp    ( 'prefix = [' + f_prfx() + '] ..from pp ...' )
 
-pp ( 'testing pp with prefix' , 1, 2, 3 )
+pp    ( 'testing pp with prefix' , 1, 2, 3 )
+
+pp    ()
+pp    ( ' ---- prefix done, next test ora_login ---- ' ) 
+pp    ()
+
+
+ora_conn = ora_logon ()
+
+sql_test = """
+  select object_type, count (*) 
+    from user_objects
+   group by object_type   
+"""
+
+cur_logon = ora_conn.cursor ()
+for row in cur_logon.execute ( sql_test ):
+  pp   ( ' ora_result : ', row )
+    
+pp    () 
+pp    ( ' ----- ora_logon: tested ---- ' )
+pp    ()
+
+
+
+pp    ()
+pp    ( ' ----- next, test timers / timing. inspect_obj.py ---- ' ) 
+pp    ()
+
+pp    ( ' we want: total-time ')  
+pp    ( '          process-time, ')  
+pp    ( '          activ-cpu: process/total (Activ-sess) ' )
+pp    ()
+
+
+pp    ( 'perf_counter     : ' , time.perf_counter() ) 
+pp    ( 'perf_counter_ns  : ' , time.perf_counter_ns() ) 
+
+time.sleep ( 2) 
+
+pp    ( 'process_time     : ' , time.perf_counter()  ) 
+pp    ( 'process_time_ns  : ' , time.perf_counter_ns() ) 
+
+pp    ( ' ----- testing done..  ---- ' ) 
