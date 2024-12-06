@@ -7,6 +7,7 @@
 # 
 # todo: 
 # - throttle: reduce imports? for ex: make import-freq 10x sleeptime ?
+# - throttle: avoid errors when .env or variable not present..
 # - throttle: warning if between-sec is less than sleep-sec ?
 # - remove debug stuff
 # - throttle: optional arg[1]: "TH_VISUAL" then print dots every sec: 
