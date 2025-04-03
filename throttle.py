@@ -27,6 +27,7 @@ g_thr_sleep_time         = 2               # seconds, to sleep  default 2 sec
 g_thr_between_reloads    = 60              # seconds between reloads
 g_thr_ep_next_reload     = time.time()     # epoch, when reload needed
 
+
 def f_sleep_visual( nsec):
 
   n_counter = 0

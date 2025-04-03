@@ -48,15 +48,15 @@ def tmr_durat ():
 
 if __name__ == '__main__':
 
-  print ( ' --- start  : ', tmr_start() )
-  print ( ' --- set    : ', tmr_set() )
-  print ( ' --- dur    : ', tmr_durat() )
+  print ( '\n --- start  : ', tmr_start(), '\t\t, this set the start-time.' )
+  print (   ' --- set    : ', tmr_set()  , '\t\t, this set the lap-time stopwatch.' ) 
+
+  print ( '\n --- dur    : ', tmr_durat(), '\t\t, this measured the stopwatch-time, very short.' )
+  print (   ' --- tot    : ', tmr_total()  , '\t\t, this measured the total time since start, little longer.' )
 
   time.sleep ( 1 ) 
-  print ( ' \n --- dur    : ', tmr_durat() )
-  print ( ' --- total  : ', tmr_total() )
-  print ( ' --- dur2   : ', tmr_durat() )
-  print ( ' --- total2 : ', tmr_total() )
+  print ( '\n --- dur1   : ', tmr_durat(), '\t\t, this measured the stopwatch-time, 1sec?.' )
+  print (   ' --- tot1    : ', tmr_total()  , '\t\t, this measured the total time since start, just over 1sec?' )
 
 # print ( ' --- total3 : ', tmr_total() )
 # print ( ' --- dur3   : ', tmr_durat() )
