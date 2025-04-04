@@ -106,7 +106,7 @@ pp    ()
 
 
 # for 1 min..
-f_do_roundtrips_sec ( 60.1 )
+f_do_roundtrips_sec ( 120.5 )
 
 pp ( ' ----- roundtrips done -----' ) 
 
