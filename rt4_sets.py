@@ -142,32 +142,42 @@ def f_do_sql ( n_secs ):
     select to_number ( to_char ( sysdate, 'SS' ) ) from dual
   """
   # or..return 1 row, 1 value, easiest cursor to read...
-  sql1_cnt = """ select count (*) as cnt from rt1 where payload like :b_payl """
+  sql1_cnt = """ select id id, substr ( payload, 1, 5) as payload 
+      from rt1 
+      where payload like :b_payl 
+      order by 2 desc """
   # sql1_cnt = """ select count (*) as cnt from dual """
 
   cur_cnt = ora_conn.cursor()
 
   n_count = 0
+  n_rows  = 0
   n_total = 0
   n_start = time.perf_counter()
   while time.perf_counter() - n_start < n_secs:
     n_count += 1
 
     # randome string of 3..
-    s_payl = '%' + ''.join(random.choices(string.ascii_uppercase, k=3)) + '%'
+    s_payl = '%' + ''.join(random.choices(string.ascii_uppercase, k=1)) + '%'
     # cur_cnt.execute ( sql1_cnt )
     cur_cnt.execute ( sql1_cnt, b_payl=s_payl )
     rows = cur_cnt.fetchall ()
 
-    # pp (' cur1 fetched like: ',   s_payl, ' row-0:', rows[0], rows[0][0] )
-    n_total += rows[0][0]
+    pp (' cur1 fetched like: ',   s_payl )
+
+    for row in rows:
+      n_rows += +1
+      # pp (' cur1 fetched row: ', row )
+
+  # end of while-n_secs.
 
   ms_sql = 1000.0 * n_secs/n_count 
 
   pp (' ' )
-  pp ( 'n_total         : ', n_total )
-  pp ( 'nr dual-fetches : ', n_count, ' loops/sec: ', n_count/n_secs )
-  pp ( 'ms per fetch    : ', ms_sql )
+  pp ( 'n_count         : ', n_count )
+  pp ( 'n_rows          : ', n_rows )
+  pp ( 'nr fetch-alls   : ', n_count, ' loops/sec: ', n_count/n_secs )
+  pp ( 'ms per fetchall : ', ms_sql )
   pp (' ' )
 
   return n_secs # -- -- -- f_do_sql, looped over sql

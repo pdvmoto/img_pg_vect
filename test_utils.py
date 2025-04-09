@@ -79,8 +79,11 @@ sql_test = """
 """
 
 cur_logon = ora_conn.cursor ()
-for row in cur_logon.execute ( sql_test ):
-  pp   ( ' ora_result : ', row )
+cur_logon.execute ( sql_test )
+columns = [col.name for col in cur_logon.description]
+pp     ( ' cursor colums : ', columns)
+for row in cur_logon:
+  pp   ( ' cursor data   : ', row )
     
 pp    () 
 pp    ( ' ----- ora_logon: tested ---- ' )

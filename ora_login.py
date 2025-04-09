@@ -79,6 +79,43 @@ def ora_logon ( *args ):
   return ora_conn  # ------- logon and return conn object --- 
 
 
+def ora_sess_info ( the_conn ):
+  # 
+  # output network and other stats from session 
+  # 
+  sql_stats = """
+    select sn.name, st.value
+    --, st.* 
+    from v$mystat st
+    , v$statname sn
+    where st.statistic# = sn.statistic# 
+    and (  sn.name like '%roundtrips%'
+        or sn.name like 'bytes sent%client'
+        or sn.name like 'bytes rece%client'
+        or sn.name like '%execute count%'
+        or sn.name like 'user calls'
+        or sn.name like 'user commits'
+        or sn.name like 'user rollbacks'
+        or sn.name like 'consistent gets'
+        or sn.name like 'db block gets'
+        or sn.name like 'opened cursors current'
+        or sn.name like 'opened cursors curr%'
+        or sn.name like '%sorts%'
+        or sn.name like '%physical reads'
+        )
+      order by sn.name 
+  """
+
+  print ( ' ora_sess_info: Report out Session Stats ' ) 
+
+  cur_stats = the_conn.cursor()
+  for row in cur_stats.execute ( sql_stats ):
+    # p   ( ' stats : ', row[1], ' ', row[0] )
+    print   ( ' ora_sess_info: ', f"{row[1]:10d}  {row[0]}"   )
+
+  return 0 # -- -- -- -- ora_sess_info
+
+
 # ---- some  test code below... ---- 
 
 sql_test = """
@@ -105,5 +142,11 @@ if __name__ == '__main__':
   
   print ()
   print ( ' ---- ora_logon: tested with count * for user_objects ---- ' ) 
+  print ()
+
+  ora_sess_info ( ora_conn )
+
+  print ()
+  print ( ' ---- ora_sess_info: tested with current session ---- ' ) 
   print ()
 

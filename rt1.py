@@ -1,4 +1,8 @@
 #  rt1.py : measure round trips
+#
+# ASCII: 49-90: 1-Z
+# need random nr between 49 and 9 chr(49) - chr(90)0
+#
 
 print ( ' ---- rt1.py --- ' )
 
@@ -106,7 +110,7 @@ pp    ()
 
 
 # for 1 min..
-f_do_roundtrips_sec ( 120.5 )
+f_do_roundtrips_sec ( 10.5 )
 
 pp ( ' ----- roundtrips done -----' ) 
 
