@@ -56,6 +56,7 @@ def ora_logon ( *args ):
 
   # 
   # verify... dont print this at work.
+  print    ( ' ora_login: ' ) 
   print    ( ' ora_login: ' + ora_user + ' / **************** @ ' 
            + ora_server + ' ; ' + ora_port + ' \\ ' + ora_sid )
 
@@ -75,6 +76,7 @@ def ora_logon ( *args ):
     print  ( ' ora_login:', row[1] )
 
   print    ( ' ora_login:  <-- Connection  ---- ' )
+  print    ( ' ora_login: ' ) 
 
   return ora_conn  # ------- logon and return conn object --- 
 

@@ -65,6 +65,9 @@ def f_do_roundtrips_sec ( n_secs ):
   s_payl = '%' + ''.join(random.choices(string.ascii_uppercase, k=3)) + '%'
 
   cur1 = ora_conn.cursor()
+  pp ( ' cur properties,  array: ', cur1.arraysize )
+  pp ( ' cur properties, prefch: ', cur1.prefetchrows )
+
   cur1.execute ( sql1_cnt, b_payl=s_payl )
   rows = cur1.fetchall ()
 
@@ -112,5 +115,11 @@ pp    ()
 # for 1 min..
 f_do_roundtrips_sec ( 10.5 )
 
-pp ( ' ----- roundtrips done -----' ) 
+pp    ()
+pp    ( ' ----- roundtrips measured  ----- ' )
+pp    ()
+
+ora_sess_info ( ora_conn )
+
+pp ( ' ----- sess_info displayed, done -----' ) 
 

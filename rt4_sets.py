@@ -67,23 +67,11 @@ def f_chatty_info ():
   return 0 # -- -- -- -- f_chatty_info
 
 
-ora_conn = ora_logon ()
-# ora_con2 = ora_logon ()
-
 sql_test = """
   select object_type, count (*)
     from user_objects
    group by object_type
 """
-
-# cur_logon = ora_conn.cursor ()
-# for row in cur_logon.execute ( sql_test ):
-#   pp   ( ' ora_result : ', row )
-
-pp    ()
-pp    ( ' ----- ora_logon: done ---- ' )
-pp    ()
-
 
 def f_do_pings ( n_secs ):
   #
@@ -96,26 +84,28 @@ def f_do_pings ( n_secs ):
     n_count += 1
     # empty loop 
 
-  ms_p_loop = 1000.0 * n_secs/n_count 
+  n_dur = time.perf_counter() - n_start
+  ms_p_loop  = 1000.0 * n_secs /n_count 
+  ms_p_loop2 = 1000.0 * n_dur  /n_count 
 
   pp (' ' )
-  pp ( 'nr empty loops: ', n_count, ' loops/sec: ', n_count/n_secs )
-  pp ( 'ms per loop   : ', ms_p_loop )
+  pp ( 'n_sec and actual dur  : ', n_secs, ' ', n_dur )
+  pp ( 'nr empty loops        : ', n_count, ' loops/sec: ', n_count/n_secs, ' better: ', n_count/n_dur )
+  pp ( 'ms per loop  and _2   : ', ms_p_loop, ' more exact: ', ms_p_loop2 )
   pp (' ' )
 
-  n_count = 0
-  n_start = time.perf_counter()
-  while time.perf_counter() - n_start < n_secs:
-    n_count += 1
-    ora_conn.is_healthy()
-    # ora_con2.is_healthy()
+  # n_count = 0
+  # n_start = time.perf_counter()
+  # while time.perf_counter() - n_start < n_secs:
+  #   n_count += 1
+  #   ora_conn.is_healthy()
 
-  ms_p_health = 1000.0 * n_secs/n_count 
+  # ms_p_health = 1000.0 * n_secs/n_count 
 
-  pp (' ' )
-  pp ( 'nr empty heaalth: ', n_count, ' loops/sec: ', n_count/n_secs )
-  pp ( 'ms per heaalth  : ', ms_p_health )
-  pp (' ' )
+  # pp (' ' )
+  # pp ( 'nr empty heaalth: ', n_count, ' loops/sec: ', n_count/n_secs )
+  # pp ( 'ms per heaalth  : ', ms_p_health )
+  # pp (' ' )
 
   n_count = 0
   n_start = time.perf_counter()
@@ -124,15 +114,17 @@ def f_do_pings ( n_secs ):
     ora_conn.ping()
     # ora_con2.ping()
 
-  ms_p_ping = 1000.0 * n_secs/n_count 
+  n_dur = time.perf_counter() - n_start
+  ms_p_loop  = 1000.0 * n_secs /n_count 
+  ms_p_loop2 = 1000.0 * n_dur  /n_count 
 
   pp (' ' )
-  pp ( 'nr empty ping: ', n_count, ' loops/sec: ', n_count/n_secs )
-  pp ( 'ms per ping  : ', ms_p_ping )
+  pp ( 'n_sec and actual dur  : ', n_secs, ' ', n_dur )
+  pp ( 'nr empty ping         : ', n_count, ' loops/sec: ', n_count/n_secs, ' better: ', n_count/n_dur )
+  pp ( 'ms per ping  and _2   : ', ms_p_loop, ' more exact: ', ms_p_loop2 )
   pp (' ' )
 
   return  n_secs #  -- -- -- roundtrips...
-
 
 def f_do_sql ( n_secs ):
   # 
@@ -146,9 +138,11 @@ def f_do_sql ( n_secs ):
       from rt1 
       where payload like :b_payl 
       order by 2 desc """
+
   # sql1_cnt = """ select count (*) as cnt from dual """
 
   cur_cnt = ora_conn.cursor()
+  cur_cnt.arraysize = 1
 
   n_count = 0
   n_rows  = 0
@@ -157,13 +151,13 @@ def f_do_sql ( n_secs ):
   while time.perf_counter() - n_start < n_secs:
     n_count += 1
 
-    # randome string of 3..
-    s_payl = '%' + ''.join(random.choices(string.ascii_uppercase, k=1)) + '%'
+    # randome string of k..
+    s_payl = '%' + ''.join(random.choices(string.ascii_uppercase, k=4)) + '%'
     # cur_cnt.execute ( sql1_cnt )
     cur_cnt.execute ( sql1_cnt, b_payl=s_payl )
     rows = cur_cnt.fetchall ()
 
-    pp (' cur1 fetched like: ',   s_payl )
+    pp (' cur1 fetched like: ',   s_payl, ' nr_recs: ', len(rows) )
 
     for row in rows:
       n_rows += +1
@@ -171,9 +165,11 @@ def f_do_sql ( n_secs ):
 
   # end of while-n_secs.
 
-  ms_sql = 1000.0 * n_secs/n_count 
+  n_dur = time.perf_counter() - n_start
+  ms_sql = 1000.0 * n_dur/n_count 
 
   pp (' ' )
+  pp ( 'n_sec, n_dur    : ', n_secs, ' ', n_dur )
   pp ( 'n_count         : ', n_count )
   pp ( 'n_rows          : ', n_rows )
   pp ( 'nr fetch-alls   : ', n_count, ' loops/sec: ', n_count/n_secs )
@@ -182,18 +178,112 @@ def f_do_sql ( n_secs ):
 
   return n_secs # -- -- -- f_do_sql, looped over sql
 
+
+def f_do_sql_fetchone ( n_secs ):
+  # 
+  #  do SQL-fetches, use fetchone
+  # 
+  sql_dual = """ 
+    select to_number ( to_char ( sysdate, 'SS' ) ) from dual
+  """
+  # or..return 1 row, 1 value, easiest cursor to read...
+  sql1_cnt = """ select id id, substr ( payload, 1, 5) as payload 
+      from rt1 
+      where payload like :b_payl 
+      order by 2 desc """
+  # sql1_cnt = """ select count (*) as cnt from dual """
+
+  cur_cnt = ora_conn.cursor()
+
+  # impact! 
+  # cur_cnt.arraysize = 3
+
+  n_loopcnt = 0
+  n_execnt  = 0
+  n_rows    = 0
+  n_total = 0
+  n_start = time.perf_counter()
+
+  while time.perf_counter() - n_start < n_secs:
+
+    n_loopcnt += 1
+
+    # randome string of k..
+    s_payl = '%' + ''.join(random.choices(string.ascii_uppercase, k=4)) + '%'
+
+    n_execnt = 0
+    for row in cur_cnt.execute ( sql1_cnt, b_payl=s_payl ):
+      n_execnt += 1 
+      n_rows   += 1
+      # pp (' cur1 fetched row: ', row, ', row0: ', row[0] )
+
+    # end for cursor
+
+    pp (' cur1 fetched like: ',   s_payl, ' nr_recs_in_cur: ', n_execnt, ' total: ', n_rows )
+
+  # end of while n_secs.
+
+  n_dur = time.perf_counter() - n_start
+  ms_sql = 1000.0 * n_dur/n_rows 
+
+  pp (' ' )
+  pp ( 'n_sec, n_dur    : ', n_secs, ' ', n_dur )
+  pp ( 'n_loopcnt       : ', n_loopcnt )
+  pp ( 'n_rows          : ', n_rows )
+  pp ( 'nr fetch-alls   : ', n_loopcnt, ' loops/sec: ', n_loopcnt/n_dur )
+  pp ( 'ms per row : ', ms_sql )
+  pp (' ' )
+
+  return n_secs # -- -- -- f_do_sql_fetchone, looped over sql
+
 pp    ()
-pp    ( ' ----- functions defined ----- ' )
+pp    ( ' ----- functions defined, starting actual program ----- ' )
 pp    ()
 
 
-# for 1 min..
-# f_do_pings ( 30.5 )
+# dflt duration here...
+n_secs = 10.0
 
-f_do_sql ( 60.0 )
+if len(sys.argv) > 1:
+  n_secs = float ( sys.argv[1] )
+
+pp    ()
+ora_conn = ora_logon ()
+pp    ()
+
+pp    ()
+pp    ( ' ----- ora_logon: done ---- ' )
+pp    ()
+
+# for n_secs  ..
+f_do_pings ( n_secs )
 
 pp    ()
 pp    ( ' ----- pings done ----- ' )
+pp    ()
+
+# show stats for this connection..
+ora_sess_info ( ora_conn )
+
+pp    ()
+pp    ( ' ----- ora_logon: new connection  ---- ' )
+pp    ()
+
+ora_conn = ora_logon ()
+f_do_sql ( n_secs )
+
+pp    ()
+pp    ( ' ----- sql done ----- ' )
+pp    ()
+
+# show stats for this connection..
+ora_sess_info ( ora_conn )
+
+ora_conn = ora_logon ()
+f_do_sql_fetchone ( n_secs )
+
+pp    ()
+pp    ( ' ----- sql done ----- ' )
 pp    ()
 
 # show stats for this connection..
