@@ -1,0 +1,35 @@
+
+additional: throttle based on AAS.
+ - tmr_aas_init
+ - tmr_aas_chk : if not init, do init + pause + check+pause-yn, if already init: check+pause-yn
+ - tmr_aas_env : get/refresh the paramters
+ - chk_aas: get-aas + get-perc + check if sleep is needed. 
+ - get cpus: 
+ - use percentage_uage: nr-aas/nr_cpu, if below threshold: Go.
+ - in dotenv: threshold_pct, pause_interval_sec
+
+
+Questions: 
+q1:what if no access to paramters.. ? 
+
+pseudo code:
+0. load duration.py, ora_login.py
+    0.1 get ora-credentials from dotenv
+1. connect and create conn_obj
+2. init using connection: tmr_aas_init ( conn_obj ) 
+    2.1 get dotenv + set global vars
+    2.2 get first set of vars (what if no access?)
+3. do some work, load the database
+4. tmr_aas_chk ( conn_obj ) : 
+    4.0 get dotenv to refresh global vars (e.g. can be edited on the go)
+    4.1 if not init: 
+          4.1.1 call init + pause + return
+        else:
+          4.1.2 get tmr_aas_db_time_ms, aas_nr_cpus
+          4.1.3 if ass/cpu below threshold (e.g. not busy): 
+                 4.1.3.1 return
+                else:
+                 4.1.3.2 pause + return
+                endif
+        endif
+5. do work, jump to nr4 for next check
