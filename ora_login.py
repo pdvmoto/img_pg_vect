@@ -124,7 +124,7 @@ def ora_sess_info ( the_conn ):
   cur_stats = the_conn.cursor()
   for row in cur_stats.execute ( sql_stats ):
     # p   ( ' stats : ', row[1], ' ', row[0] )
-    print   ( ' ora_sess_info: ', f"{row[1]}  {row[0]}"   )
+    print   ( ' ora_sess_info: ', f"{row[1]:8.0f}  {row[0]}"   )
 
   return 0 # -- -- -- -- ora_sess_info
 
@@ -254,7 +254,7 @@ if __name__ == '__main__':
   print ( ' ---- ora_logon: tested count *  user_objects, do 1 more aas ---- ' ) 
   print ()
 
-  time.sleep( 30 )
+  time.sleep( 10 )
   ora_aas_chk ( ora_conn )
 
   print ()

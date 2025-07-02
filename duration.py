@@ -8,7 +8,7 @@ from datetime import datetime
 #   from duration import *
 #
 # functions:
-# - tmr_start() : set start point, return now()    global variable: g_start_total
+# - tmr_start() : set start point, return now()    global variable: g_tmr_total
 # - tmr_total() : get sec since tmr_total, stopwatch from start of program
 # - tmr_set()   : set point to measure, now(), also re-sset.. global_var: g_start_dur
 # - tmr_durat() : get duration in sec/ms since last set, the stopwatch inside the program
@@ -75,15 +75,15 @@ def pf_set():
 
 if __name__ == '__main__':
 
-  print ( '\n --- start  : ', tmr_start(), '\t\t, this set the start-time.' )
-  print (   ' --- set    : ', tmr_set()  , '\t\t, this set the lap-time stopwatch.' ) 
+  print ( '\n --- start  : ', tmr_start(), '\t\t, set the start-time.' )
+  print (   ' --- set    : ', tmr_set()  , '\t\t, set the lap-time stopwatch.' ) 
 
-  print ( '\n --- dur    : ', tmr_durat(), '\t\t, this measured the stopwatch-time, very short.' )
-  print (   ' --- tot    : ', tmr_total()  , '\t\t, this measured the total time since start, little longer.' )
+  print ( '\n --- dur    : ', f"{tmr_durat():3.6f}", '\t, measured the stopwatch-time, very short.' )
+  print (   ' --- tot    : ', f"{tmr_total():3.6f}", '\t, measured the total time since start, little longer.' )
 
   time.sleep ( 1 ) 
-  print ( '\n --- dur1   : ', tmr_durat(), '\t\t, this measured the stopwatch-time, 1sec?.' )
-  print (   ' --- tot1   : ', tmr_total(), '\t\t, this measured the total time since start, just over 1sec?' )
+  print ( '\n --- dur1   : ', f"{tmr_durat():3.6f}", '\t, measured the stopwatch-time, 1sec?.' )
+  print (   ' --- tot1   : ', f"{tmr_total():3.6f}", '\t, measured the total time since start, just over 1sec?' )
 
 # print ( ' --- total3 : ', tmr_total() )
 # print ( ' --- dur3   : ', tmr_durat() )
@@ -93,23 +93,24 @@ if __name__ == '__main__':
 # time.sleep ( 1 ) 
 # print ( '\n --- total4 : ', tmr_total() )
 # print (   ' --- dur    : ', tmr_durat() )
+
   time.sleep ( 1) 
   print ( '\n --- re-set : ', tmr_set() )
-  print (   ' --- dur0   : ', f" = {tmr_durat():9.5f}" )
-  print (   ' --- total5 : ', f" = {tmr_total():9.5f}" )
+  print (   ' --- dur2   : ', f"{tmr_durat():3.6f}", '\t, duration, after reset,   very short?' )
+  time.sleep ( 1 )
+  print (   ' --- dur3   : ', f"{tmr_durat():3.6f}", '\t, duration, after reset+1, 1sec? ' )
+  print (   ' --- total3 : ', f"{tmr_total():3.6f}", '\t, total, wasnt reset,      3sec?')
 
-  n_spin_sec = 3.14
-  print ( '\n -- check spinning... ' )
+  n_spin_sec = 3.141593
+  print ( '\n --- check spinning... ' )
   print (   ' --- re-set : ', tmr_set() )
   n_ret = tmr_spin ( n_spin_sec ) 
-  print (   ' --- dur    : ', tmr_durat(), '\t\t, this measured the spin_time, ', n_spin_sec, ' sec?... ', n_ret , '.' )
+  print (   ' --- dur    : ', f"{tmr_durat():3.6f}", '\t, measured the spin_time, ', n_spin_sec, ' sec?... retval was:', n_ret , '.' )
 
 
-  print ( ' -- testing pf -- ' )
+  # print ( ' -- testing pf -- ' )
+  # print ( 'pf_get : ', pf_get() ) 
+  # print ( ' - ' )
+  # print ( 'pf_set : ', pf_set() ) 
 
-  print ( 'pf_get : ', pf_get() ) 
-
-  print ( ' - ' )
- 
-  print ( 'pf_set : ', pf_set() ) 
-
+  print ( '\n --- end of self-test duration.py --- \n' ) 

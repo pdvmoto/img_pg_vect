@@ -51,3 +51,12 @@ pseudo code:
         return ( ms_paused?) and let program continue
 5. do work, jump to nr4 for next check
 
+qwuery
+select s.value as dbtime_ms
+     , (sysdate - TO_DATE('1970-01-01', 'YYYY-MM-DD')) * 86400 as dt_epoch_s
+     , p.value as cpu_count
+from v$sysstat s
+   , v$parameter p
+where s.name like 'DB time'
+  and p.name = 'cpu_count';
+
